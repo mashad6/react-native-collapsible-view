@@ -1,17 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  I18nManager,
-  Animated,
-  Easing,
-} from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, I18nManager, Animated, Easing, TouchableHighlight, TouchableWithoutFeedback } from "react-native";
 import Collapsible from "react-native-collapsible";
 import ArrowDownIcon from "./ArrowDownIcon";
 
-const CollapsibleView = ({
+export default ({
   children,
   title = "",
   initExpanded = false,
@@ -25,13 +17,10 @@ const CollapsibleView = ({
   noArrow = false,
   style = {},
   activeOpacityFeedback = 0.3,
-  TouchableComponent = TouchableOpacity,
   titleProps = {},
   titleStyle = {},
-  touchableWrapperStyle = {},
-  touchableWrapperProps = {},
 }) => {
-  let controlled = expanded !== null;
+  let controlled = expanded === null ? false : true;
   const [show, setShow] = useState(initExpanded);
   const [mounted, setMounted] = useState(initExpanded);
 
@@ -84,12 +73,7 @@ const CollapsibleView = ({
     outputRange: ["0deg", "360deg"],
   });
 
-  const TitleElement =
-    typeof title === "string" ? (
-      <Text style={styles.TitleText}>{title}</Text>
-    ) : (
-      title
-    );
+  const TitleElement = typeof title === "string" ? <Text style={styles.TitleText}>{title}</Text> : title;
 
   useEffect(() => {
     // this part is to trigger collapsible animation only after he has been fully mounted so animation would
@@ -111,53 +95,50 @@ const CollapsibleView = ({
   });
 
   return (
-    <TouchableComponent
-      style={[styles.container, style, touchableWrapperStyle]}
-      onPress={handleToggleShow}
-      activeOpacity={activeOpacityFeedback}
-      {...touchableWrapperProps}
+    <View
+      style={[styles.container, style]}
+      // onPress={handleToggleShow}
+      // activeOpacity={activeOpacityFeedback}
     >
-      <View
-        style={{
-          flexDirection: rowDir,
-          alignItems: "center",
-          ...titleStyle,
-        }}
-        {...titleProps}
-      >
-        {noArrow ? null : (
-          <Animated.View style={{ transform: [{ rotate: rotateAnimDeg }] }}>
-            <ArrowDownIcon {...arrowStyling} />
-          </Animated.View>
-        )}
-        {TitleElement}
-      </View>
+      {false &&
+        <View
+          style={{
+            flexDirection: rowDir,
+            alignItems: "center",
+            ...titleStyle,
+          }}
+          {...titleProps}
+        >
+          {noArrow ? null : (
+            <Animated.View style={{ transform: [{ rotate: rotateAnimDeg }] }}>
+              <ArrowDownIcon {...arrowStyling} />
+            </Animated.View>
+          )}
+          {TitleElement}
+        </View>
+      }
       {mounted ? (
         <View style={{ width: "100%", ...collapsibleContainerStyle }}>
-          <Collapsible
-            onAnimationEnd={handleAnimationEnd}
-            collapsed={!show}
-            {...{ duration, ...collapsibleProps }}
-          >
+          <Collapsible onAnimationEnd={handleAnimationEnd} collapsed={!show} {...{ duration, ...collapsibleProps }}>
             {children}
           </Collapsible>
         </View>
       ) : null}
-    </TouchableComponent>
+    </View>
   );
 };
-
-export default CollapsibleView;
 
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     marginHorizontal: 10,
     marginVertical: 5,
-    padding: 5,
+    paddingHorizontal: 5,
     borderColor: "grey",
-    borderWidth: 1,
-    borderStyle: "solid",
+    // borderWidth: 1,
+    // borderStyle: 'solid',
+    width: '95%',
+    alignSelf: 'center',
   },
   TitleText: { color: "#3385ff", fontSize: 16, padding: 5 },
 });
